@@ -1,20 +1,55 @@
-// LingoMax.cpp : Este arquivo contém a função 'main'. A execução do programa começa e termina ali.
-//
-
 #include <iostream>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+using namespace std;
+
+struct Idioma {
+	int cod_idioma;
+	char descricao[30];
+};
+
+struct Idioma_index {
+	int cod;
+	int end;
+};
+
+struct Licao {
+	int cod_licao;
+	int cod_idioma;
+	int total_niveis;
+};
+
+struct Licao_index{
+	int cod;
+	int end;
+};
+
+struct Exercicio {
+	int cod_exercicio;
+	int nivel_dificuldade;
+	char pergunta[120];
+	char resposta_correta[100];
+	float pontos;
+};
+
+struct Exercicio_index {
+	int cod;
+	int end;
+};
+
+struct Usuario {
+	int cod_usuario;
+	char nome[60];
+	int cod_idioma;
+	int nivel_atual;
+	float pontuacao_total;
+};
+
+struct Usuario_index {
+	int cod;
+	int end;
+};
+
+
+int main() {
+
 }
-
-// Executar programa: Ctrl + F5 ou Menu Depurar > Iniciar Sem Depuração
-// Depurar programa: F5 ou menu Depurar > Iniciar Depuração
-
-// Dicas para Começar: 
-//   1. Use a janela do Gerenciador de Soluções para adicionar/gerenciar arquivos
-//   2. Use a janela do Team Explorer para conectar-se ao controle do código-fonte
-//   3. Use a janela de Saída para ver mensagens de saída do build e outras mensagens
-//   4. Use a janela Lista de Erros para exibir erros
-//   5. Ir Para o Projeto > Adicionar Novo Item para criar novos arquivos de código, ou Projeto > Adicionar Item Existente para adicionar arquivos de código existentes ao projeto
-//   6. No futuro, para abrir este projeto novamente, vá para Arquivo > Abrir > Projeto e selecione o arquivo. sln
