@@ -49,7 +49,19 @@ struct Usuario_index {
 	int end;
 };
 
+void insert_idioma(Idioma table[], Idioma_index index[], int n, int len[]) {
+
+}
 
 int main() {
-
+	const int n = 1000;
+	int len[4];
+	/*
+		len[0] -> Idioma
+		len[1] -> Licao
+		len[2] -> Exercicio
+		len[3] -> Usuario
+	*/
+	Idioma idiomas[n];
+	Idioma_index idiomas_index[n];
 }
