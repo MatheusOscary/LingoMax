@@ -81,7 +81,6 @@ void register_index_idioma(Idioma table[], Idioma_index index[], int len[], int 
 		cout << m << endl;
 	};
 
-}
 
 
 void insert_idioma(Idioma table[], Idioma_index index[], int n, int len[]) {
