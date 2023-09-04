@@ -54,6 +54,87 @@ struct Usuario_index {
 	int end;
 };
 
+/*================================== INICIO BUSCA BINARIA ==================================*/
+
+int busca_idioma(struct Idioma table[], struct Idioma_index index[], int len[], int cod) {
+	int i = 0, f = len[0] - 1;
+	int m = (i + f) / 2;
+	for (; f >= i && cod != index[m].cod; m = (i + f) / 2) {
+		if (cod > index[m].cod)
+			i = m + 1;
+		else
+			f = m - 1;
+	}
+	if (cod == index[m].cod) {
+		return index[m].end;
+	}
+	else
+		return -1;
+}
+
+int busca_licao(struct Licao table[], struct Licao_index index[], int len[], int cod) {
+	int i = 0, f = len[1] - 1;
+	int m = (i + f) / 2;
+	for (; f >= i && cod != index[m].cod; m = (i + f) / 2) {
+		if (cod > index[m].cod)
+			i = m + 1;
+		else
+			f = m - 1;
+	}
+	if (cod == index[m].cod) {
+		return index[m].end;
+	}
+	else
+		return -1;
+}
+
+int busca_exercicio(struct Exercicio table[], struct Exercicio_index index[], int len[], int cod) {
+	int i = 0, f = len[2] - 1;
+	int m = (i + f) / 2;
+	for (; f >= i && cod != index[m].cod; m = (i + f) / 2) {
+		if (cod > index[m].cod)
+			i = m + 1;
+		else
+			f = m - 1;
+	}
+	if (cod == index[m].cod) {
+		return index[m].end;
+	}
+	else
+		return -1;
+}
+
+int busca_usuario(struct Usuario table[], struct Usuario_index index[], int len[], int cod) {
+	int i = 0, f = len[3] - 1;
+	int m = (i + f) / 2;
+	for (; f >= i && cod != index[m].cod; m = (i + f) / 2) {
+		if (cod > index[m].cod)
+			i = m + 1;
+		else
+			f = m - 1;
+	}
+	if (cod == index[m].cod) {
+		return index[m].end;
+	}
+	else
+		return -1;
+}
+
+void consulta_idioma(struct Idioma table[], int pos) {
+	if (pos < 0) {
+		cout << "Idioma indefinido!" << endl;
+	}
+	else {
+		if (!(table[pos].deletado)) {
+			cout << "Descrição: " << table[pos].descricao << endl;
+		}
+		else {
+			cout << "Idioma indefinido!" << endl;
+		}
+	}
+}
+/*================================== FIM BUSCA BINARIA ==================================*/
+
 /*================================== INICIO INSERIR DADOS ==================================*/
 
 void register_index_idioma(Idioma table[], Idioma_index index[], int len[], int end) {
@@ -101,7 +182,7 @@ void register_index_licao(Licao table[], Licao_index index[], int len[], int end
 	index[fim + 1].end = end;
 }
 
-void insert_licao(Licao table[], Licao_index index[], int n, int len[]) {
+void insert_licao(Licao table[], Licao_index index[], Idioma idioma[], Idioma_index idioma_index[], int n, int len[]) {
 	system("clear||cls");
 	char finalizar[2];
 	cout << "========= CADASTRAR LIÇÃO =========" << endl;
@@ -110,6 +191,7 @@ void insert_licao(Licao table[], Licao_index index[], int n, int len[]) {
 		cin >> table[i].cod_licao;
 		cout << "Código idioma: ";
 		cin >> table[i].cod_idioma;
+		consulta_idioma(idioma, busca_idioma(idioma, idioma_index, len, table[i].cod_idioma));
 		cout << "Total niveis: ";
 		cin >> table[i].total_niveis;
 		table[i].deletado = false;
@@ -122,7 +204,7 @@ void insert_licao(Licao table[], Licao_index index[], int n, int len[]) {
 			return;
 		}
 		else {
-			insert_licao(table, index, n, len);
+			insert_licao(table, index, idioma, idioma_index, n, len);
 			return;
 		}
 	}
@@ -315,6 +397,7 @@ void exaustiva_usuario(struct Usuario table[], struct Usuario_index index[], int
 /*================================== FIM LEITURA EXAUSTIVA ==================================*/
 
 
+
 int main() {
 	setlocale(LC_ALL, "portuguese");
 	const int n = 1000;
@@ -360,7 +443,7 @@ int main() {
 				insert_idioma(idiomas, idiomas_index, n, len);
 				break;
 			case 2:
-				insert_licao(licoes, licoes_index, n, len);
+				insert_licao(licoes, licoes_index, idiomas, idiomas_index, n, len);
 				break;
 			case 3:
 				insert_exercicio(exercicios, exercicios_index, n, len);
