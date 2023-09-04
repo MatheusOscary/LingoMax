@@ -116,7 +116,7 @@ void insert_licao(Licao table[], Licao_index index[], int n, int len[]) {
 		register_index_licao(table, index, len, i);
 		len[1]++;
 		cout << "===========================================" << endl;
-		cout << "Deseja cadastrar outro lição?[S][N] ";
+		cout << "Deseja cadastrar outra lição?[S][N] ";
 		cin >> finalizar;
 		if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
 			return;
@@ -213,6 +213,107 @@ void insert_usuario(Usuario table[], Usuario_index index[], int n, int len[]) {
 
 /*================================== FIM INSERIR DADOS ==================================*/
 
+/*================================== INICIO LEITURA EXAUSTIVA ==================================*/
+void exaustiva_idioma(struct Idioma table[], struct Idioma_index index[], int len[]) {
+	system("clear||cls");
+	char finalizar[2];
+	for (int k = 0; k < len[0]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			cout << "==================================" << endl;
+			cout << "\nCod. Idioma: " << table[i].cod_idioma;
+			cout << "\tDescrição: " << table[i].descricao << endl;
+		}
+	}
+	cout << "==================================" << endl;
+	cout << "Deseja listar novamente?[S][N] ";
+	cin >> finalizar;
+	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+		return;
+	}
+	else {
+		exaustiva_idioma(table, index, len);
+		return;
+	}
+}
+
+void exaustiva_licao(struct Licao table[], struct Licao_index index[], int len[]) {
+	system("clear||cls");
+	char finalizar[2];
+	for (int k = 0; k < len[1]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			cout << "==================================" << endl;
+			cout << "\nCod. Lição: " << table[i].cod_licao;
+			cout << "\tCod. Idioma: " << table[i].cod_idioma;
+			cout << "\tTotal niveis: " << table[i].total_niveis << endl;
+		}
+	}
+	cout << "==================================" << endl;
+	cout << "Deseja listar novamente?[S][N] ";
+	cin >> finalizar;
+	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+		return;
+	}
+	else {
+		exaustiva_licao(table, index, len);
+		return;
+	}
+}
+
+void exaustiva_exercicio(struct Exercicio table[], struct Exercicio_index index[], int len[]) {
+	system("clear||cls");
+	char finalizar[2];
+	for (int k = 0; k < len[2]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			cout << "==================================" << endl;
+			cout << "\nCod. Exercicio: " << table[i].cod_exercicio;
+			cout << "\tNivel de dificuldade: " << table[i].nivel_dificuldade;
+			cout << "\tPergunta: " << table[i].pergunta;
+			cout << "\tResposta: " << table[i].resposta_correta;
+			cout << "\tPontos: " << table[i].pontos << endl;
+		}
+	}
+	cout << "==================================" << endl;
+	cout << "Deseja listar novamente?[S][N] ";
+	cin >> finalizar;
+	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+		return;
+	}
+	else {
+		exaustiva_exercicio(table, index, len);
+		return;
+	}
+}
+
+void exaustiva_usuario(struct Usuario table[], struct Usuario_index index[], int len[]) {
+	system("clear||cls");
+	char finalizar[2];
+	for (int k = 0; k < len[3]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			cout << "==================================" << endl;
+			cout << "\nCod. Usuario: " << table[i].cod_usuario;
+			cout << "\tNome: " << table[i].nome;
+			cout << "\tCod. Idioma: " << table[i].cod_idioma;
+			cout << "\tNivel atual: " << table[i].nivel_atual;
+			cout << "\tPontuação total: " << table[i].pontuacao_total << endl;
+		}
+	}
+	cout << "==================================" << endl;
+	cout << "Deseja listar novamente?[S][N] ";
+	cin >> finalizar;
+	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+		return;
+	}
+	else {
+		exaustiva_usuario(table, index, len);
+		return;
+	}
+}
+/*================================== FIM LEITURA EXAUSTIVA ==================================*/
+
 
 int main() {
 	setlocale(LC_ALL, "portuguese");
@@ -241,11 +342,12 @@ int main() {
 		system("clear||cls");
 		cout << "---------- MENU ----------" << endl;
 		cout << "CADASTROS        [1]" << endl;
+		cout << "LISTAGEM         [2]" << endl;
 		cout << "DIGITE UMA OPÇÃO: ";
 		cin >> opcao;
+		system("clear||cls");
 		switch (opcao) {
 		case 1:
-			system("clear||cls");
 			cout << "---------- CADASTROS ----------" << endl;
 			cout << "CADASTRAR IDIOMA    [1]" << endl;
 			cout << "CADASTRAR LIÇÃO     [2]" << endl;
@@ -269,6 +371,32 @@ int main() {
 			case 0:
 				break;
 			}
+			break;
+		case 2:
+			cout << "---------- LISTAGEM ----------" << endl;
+			cout << "LISTAR IDIOMAS    [1]" << endl;
+			cout << "LISTAR LIÇÕES     [2]" << endl;
+			cout << "LISTAR EXERCICIOS [3]" << endl;
+			cout << "LISTAR USUARIOS   [4]" << endl;
+			cout << "DIGITE UMA OPÇÃO DE LISTAGEM (0 parar sair): ";
+			cin >> opcao;
+			switch (opcao) {
+			case 1:
+				exaustiva_idioma(idiomas, idiomas_index, len);
+				break;
+			case 2:
+				exaustiva_licao(licoes, licoes_index, len);
+				break;
+			case 3:
+				exaustiva_exercicio(exercicios, exercicios_index, len);
+				break;
+			case 4:
+				exaustiva_usuario(usuarios, usuarios_index, len);
+				break;
+			case 0:
+				break;
+			}
+			
 			break;
 		}
 	
