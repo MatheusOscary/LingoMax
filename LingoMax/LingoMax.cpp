@@ -299,6 +299,7 @@ void insert_usuario(Usuario table[], Usuario_index index[], int n, int len[]) {
 void exaustiva_idioma(struct Idioma table[], struct Idioma_index index[], int len[]) {
 	system("clear||cls");
 	char finalizar[2];
+	cout << "========= IDIOMAS =========" << endl;
 	for (int k = 0; k < len[0]; k++) {
 		int i = index[k].end;
 		if (!(table[i].deletado)) {
@@ -322,6 +323,7 @@ void exaustiva_idioma(struct Idioma table[], struct Idioma_index index[], int le
 void exaustiva_licao(struct Licao table[], struct Licao_index index[], int len[]) {
 	system("clear||cls");
 	char finalizar[2];
+	cout << "========= LIÇÕES =========" << endl;
 	for (int k = 0; k < len[1]; k++) {
 		int i = index[k].end;
 		if (!(table[i].deletado)) {
@@ -346,6 +348,7 @@ void exaustiva_licao(struct Licao table[], struct Licao_index index[], int len[]
 void exaustiva_exercicio(struct Exercicio table[], struct Exercicio_index index[], int len[]) {
 	system("clear||cls");
 	char finalizar[2];
+	cout << "========= EXERCICIOS =========" << endl;
 	for (int k = 0; k < len[2]; k++) {
 		int i = index[k].end;
 		if (!(table[i].deletado)) {
@@ -372,6 +375,7 @@ void exaustiva_exercicio(struct Exercicio table[], struct Exercicio_index index[
 void exaustiva_usuario(struct Usuario table[], struct Usuario_index index[], int len[]) {
 	system("clear||cls");
 	char finalizar[2];
+	cout << "========= USUARIOS =========" << endl;
 	for (int k = 0; k < len[3]; k++) {
 		int i = index[k].end;
 		if (!(table[i].deletado)) {
@@ -396,7 +400,136 @@ void exaustiva_usuario(struct Usuario table[], struct Usuario_index index[], int
 }
 /*================================== FIM LEITURA EXAUSTIVA ==================================*/
 
+/*================================== INICIO DELETAR DADOS ==================================*/
 
+void delete_idioma(Idioma table[], Idioma_index index[], int len[]) {
+	system("clear||cls");
+	char finalizar[2];
+	int cod, result;
+	cout << "========= DELETAR IDIOMA =========" << endl;
+	cout << "Codigo Idioma (-1 para cancelar): ";
+	cin >> cod;
+	if (cod >= 0) {
+		result = busca_idioma(table, index, len, cod);
+		if (result >= 0) {
+			table[result].deletado = true;
+			cout << "Idioma " << table[result].descricao << " deletado lógicamente!" << endl;
+		}
+		else {
+			cout << "Registro não encontrado!" << endl;
+		}
+	}
+	else {
+		cout << "Instrução cancelada!" << endl;
+	}
+	cout << "==================================" << endl;
+	cout << "Deseja deletar outro idioma?[S][N] ";
+	cin >> finalizar;
+	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+		return;
+	}
+	else {
+		delete_idioma(table, index, len);
+		return;
+	}
+}
+
+void delete_licao(Licao table[], Licao_index index[], int len[]) {
+	system("clear||cls");
+	char finalizar[2];
+	int cod, result;
+	cout << "========= DELETAR LIÇÃO =========" << endl;
+	cout << "Codigo Lição (-1 para cancelar): ";
+	cin >> cod;
+	if (cod >= 0) {
+		result = busca_licao(table, index, len, cod);
+		if (result >= 0) {
+			table[result].deletado = true;
+			cout << "Lição " << table[result].cod_licao << " deletado lógicamente!" << endl;
+		}
+		else {
+			cout << "Registro não encontrado!" << endl;
+		}
+	}
+	else {
+		cout << "Instrução cancelada!" << endl;
+	}
+	cout << "==================================" << endl;
+	cout << "Deseja deletar outra lição?[S][N] ";
+	cin >> finalizar;
+	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+		return;
+	}
+	else {
+		delete_licao(table, index, len);
+		return;
+	}
+}
+
+void delete_exercicio(Exercicio table[], Exercicio_index index[], int len[]) {
+	system("clear||cls");
+	char finalizar[2];
+	int cod, result;
+	cout << "========= DELETAR EXERCICIO =========" << endl;
+	cout << "Codigo Exercicio (-1 para cancelar): ";
+	cin >> cod;
+	if (cod >= 0) {
+		result = busca_exercicio(table, index, len, cod);
+		if (result >= 0) {
+			table[result].deletado = true;
+			cout << "Exercicio " << table[result].cod_exercicio << " deletado lógicamente!" << endl;
+		}
+		else {
+			cout << "Registro não encontrado!" << endl;
+		}
+	}
+	else {
+		cout << "Instrução cancelada!" << endl;
+	}
+	cout << "==================================" << endl;
+	cout << "Deseja deletar outro exercicio?[S][N] ";
+	cin >> finalizar;
+	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+		return;
+	}
+	else {
+		delete_exercicio(table, index, len);
+		return;
+	}
+}
+
+void delete_usuario(Usuario table[], Usuario_index index[], int len[]) {
+	system("clear||cls");
+	char finalizar[2];
+	int cod, result;
+	cout << "========= DELETAR USUARIO =========" << endl;
+	cout << "Codigo Usuario (-1 para cancelar): ";
+	cin >> cod;
+	if (cod >= 0) {
+		result = busca_usuario(table, index, len, cod);
+		if (result >= 0) {
+			table[result].deletado = true;
+			cout << "Usuario " << table[result].nome << " deletado lógicamente!" << endl;
+		}
+		else {
+			cout << "Registro não encontrado!" << endl;
+		}
+	}
+	else {
+		cout << "Instrução cancelada!" << endl;
+	}
+	cout << "==================================" << endl;
+	cout << "Deseja deletar outro usuario?[S][N] ";
+	cin >> finalizar;
+	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+		return;
+	}
+	else {
+		delete_usuario(table, index, len);
+		return;
+	}
+}
+/*================================== FIM DELETAR DADOS ==================================*/
 
 int main() {
 	setlocale(LC_ALL, "portuguese");
@@ -426,6 +559,7 @@ int main() {
 		cout << "---------- MENU ----------" << endl;
 		cout << "CADASTROS        [1]" << endl;
 		cout << "LISTAGEM         [2]" << endl;
+		cout << "DELETAR          [3]" << endl;
 		cout << "DIGITE UMA OPÇÃO: ";
 		cin >> opcao;
 		system("clear||cls");
@@ -481,7 +615,32 @@ int main() {
 			}
 			
 			break;
+		case 3:
+			cout << "---------- DELETAR ----------" << endl;
+			cout << "DELETAR IDIOMA    [1]" << endl;
+			cout << "DELETAR LIÇÃO     [2]" << endl;
+			cout << "DELETAR EXERCICIO [3]" << endl;
+			cout << "DELETAR USUARIO   [4]" << endl;
+			cout << "DIGITE UMA OPÇÃO DE DELETAR (0 parar sair): ";
+			cin >> opcao;
+			switch (opcao) {
+			case 1:
+				delete_idioma(idiomas,idiomas_index,len);
+				break;
+			case 2:
+				delete_licao(licoes, licoes_index, len);
+				break;
+			
+			case 3:
+				delete_exercicio(exercicios, exercicios_index, len);
+				break;
+			case 4:
+				delete_usuario(usuarios, usuarios_index, len);
+				break;
+			}
+			
+			break;
 		}
-	
+		
 	};
 }
