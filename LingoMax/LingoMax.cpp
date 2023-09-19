@@ -531,6 +531,32 @@ void delete_usuario(Usuario table[], Usuario_index index[], int len[]) {
 }
 /*================================== FIM DELETAR DADOS ==================================*/
 
+/*================================== INICIO REORGANIAZAR DADOS ==================================*/
+void reorganizar_idioma(struct Idioma_index index[], struct Idioma_index newindex[], struct Idioma table[], struct Idioma newtable[], int len[]) {
+	int j = -1;
+	
+	for (int k = 0; k < len[0]; k++) {
+		int i = index[k].end;
+		if (table[i].deletado) {
+			j++;
+			newtable[j].cod_idioma = table[i].cod_idioma;
+			strcpy_s(newtable[j].descricao, table[i].descricao);
+			newtable[j].deletado = true;
+			newindex[j].cod = newtable[j].cod_idioma;
+			newindex[j].end = j;
+		}
+	}
+	free(index);
+	free(table);
+	*((struct Idioma_index (*)[])index) = newindex;
+    *((struct Idioma (*)[])table) = newtable;
+
+    len[0] = j + 1;
+}
+
+
+/*================================== FIM REORGANIAZAR DADOS ==================================*/
+
 int main() {
 	setlocale(LC_ALL, "portuguese");
 	const int n = 1000;
@@ -545,6 +571,9 @@ int main() {
 	Idioma idiomas[n];
 	Idioma_index idiomas_index[n];
 
+	Idioma idiomas_bkp[n];
+	Idioma_index idiomas_index_bkp[n];
+
 	Licao licoes[n];
 	Licao_index licoes_index[n];
 
@@ -557,9 +586,10 @@ int main() {
 	while (true) {
 		system("clear||cls");
 		cout << "---------- MENU ----------" << endl;
-		cout << "CADASTROS        [1]" << endl;
-		cout << "LISTAGEM         [2]" << endl;
-		cout << "DELETAR          [3]" << endl;
+		cout << "\033[32mCADASTROS        [1]\033[0m" << endl;
+		cout << "\033[34mLISTAGEM         [2]\033[0m" << endl;
+		cout << "\033[31mDELETAR          [3]\033[0m" << endl;
+		cout << "\033[33mREORGANIZAR      [4]\033[0m" << endl;
 		cout << "DIGITE UMA OPÇÃO: ";
 		cin >> opcao;
 		system("clear||cls");
@@ -638,7 +668,27 @@ int main() {
 				delete_usuario(usuarios, usuarios_index, len);
 				break;
 			}
-			
+			break;
+		case 4:
+			cout << "---------- REORGANIZAR ----------" << endl;
+			cout << "REORGANIZAR IDIOMA    [1]" << endl;
+			cout << "DIGITE UMA OPÇÃO DE REORGANIZAR (0 parar sair): ";
+			cin >> opcao;
+			switch (opcao) {
+			case 1:
+				reorganizar_idioma(idiomas_index, idiomas_index_bkp, idiomas, idiomas_bkp, len);
+				break;
+			case 2:
+				delete_licao(licoes, licoes_index, len);
+				break;
+
+			case 3:
+				delete_exercicio(exercicios, exercicios_index, len);
+				break;
+			case 4:
+				delete_usuario(usuarios, usuarios_index, len);
+				break;
+			}
 			break;
 		}
 		
