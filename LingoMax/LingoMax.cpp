@@ -546,12 +546,14 @@ void reorganizar_idioma(struct Idioma_index index[], struct Idioma_index newinde
 			newindex[j].end = j;
 		}
 	}
-	free(index);
-	free(table);
-	*((struct Idioma_index (*)[])index) = newindex;
-    *((struct Idioma (*)[])table) = newtable;
-
     len[0] = j + 1;
+	for (int l = 0; l < len[0]; l++) {
+		table[l].cod_idioma = newtable[j].cod_idioma;
+		strcpy_s(table[l].descricao, newtable[l].descricao);
+		table[l].deletado = newtable[l].deletado;
+		index[l].cod = newindex[l].cod;
+		index[l].end = newindex[l].end;
+	}
 }
 
 
