@@ -54,6 +54,21 @@ struct Usuario_index {
 	int end;
 };
 
+
+
+void printProgress(double porcentagem) {
+	char progresso[101] = "";
+	for (int i = 0; i < 100; i++) {
+		if (i < porcentagem) {
+			strcat_s(progresso,100, "|");
+		}
+		else {
+			strcat_s(progresso,100, " ");
+		}
+	}
+	cout << "[" << progresso << "]";
+}
+
 /*================================== INICIO BUSCA BINARIA ==================================*/
 
 int busca_idioma(struct Idioma table[], struct Idioma_index index[], int len[], int cod) {
@@ -537,19 +552,106 @@ void reorganizar_idioma(struct Idioma_index index[], struct Idioma_index newinde
 	
 	for (int k = 0; k < len[0]; k++) {
 		int i = index[k].end;
-		if (table[i].deletado) {
+		if (!(table[i].deletado)) {
 			j++;
 			newtable[j].cod_idioma = table[i].cod_idioma;
 			strcpy_s(newtable[j].descricao, table[i].descricao);
-			newtable[j].deletado = true;
-			newindex[j].cod = newtable[j].cod_idioma;
-			newindex[j].end = j;
+			newtable[j].deletado = false;
+			newindex[j].cod = table[i].cod_idioma;
+			newindex[j].end = i;
 		}
 	}
     len[0] = j + 1;
 	for (int l = 0; l < len[0]; l++) {
-		table[l].cod_idioma = newtable[j].cod_idioma;
+		table[l].cod_idioma = newtable[l].cod_idioma;
 		strcpy_s(table[l].descricao, newtable[l].descricao);
+		table[l].deletado = newtable[l].deletado;
+		index[l].cod = newindex[l].cod;
+		index[l].end = newindex[l].end;
+	}
+}
+
+
+void reorganizar_licao(struct Licao_index index[], struct Licao_index newindex[], struct Licao table[], struct Licao newtable[], int len[]) {
+	int j = -1;
+
+	for (int k = 0; k < len[1]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			j++;
+			newtable[j].cod_licao = table[i].cod_licao;
+			newtable[j].cod_idioma = table[i].cod_idioma;
+			newtable[j].total_niveis = table[i].total_niveis;
+			newtable[j].deletado = false;
+			newindex[j].cod = newtable[j].cod_licao;
+			newindex[j].end = j;
+		}
+	}
+	len[1] = j + 1;
+	for (int l = 0; l < len[1]; l++) {
+		table[l].cod_licao = newtable[l].cod_licao;
+		table[l].cod_idioma = newtable[l].cod_idioma;
+		table[l].total_niveis = newtable[l].total_niveis;
+		table[l].deletado = newtable[l].deletado;
+		index[l].cod = newindex[l].cod;
+		index[l].end = newindex[l].end;
+	}
+}
+
+void reorganizar_exercicio(struct Exercicio_index index[], struct Exercicio_index newindex[], struct Exercicio table[], struct Exercicio newtable[], int len[]) {
+	int j = -1;
+
+	for (int k = 0; k < len[2]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			j++;
+			newtable[j].cod_exercicio = table[i].cod_exercicio;
+			newtable[j].nivel_dificuldade = table[i].nivel_dificuldade;
+			newtable[j].pontos = table[i].pontos;
+			strcpy_s(newtable[j].pergunta, table[i].pergunta);
+			strcpy_s(newtable[j].resposta_correta, table[i].resposta_correta);
+			newtable[j].deletado = false;
+			newindex[j].cod = newtable[i].cod_exercicio;
+			newindex[j].end = i; 
+		}
+	}
+	len[2] = j + 1;
+	for (int l = 0; l < len[2]; l++) {
+		table[l].cod_exercicio = newtable[l].cod_exercicio;
+		table[l].nivel_dificuldade = newtable[l].nivel_dificuldade;
+		table[l].pontos = newtable[l].pontos;
+		strcpy_s(table[l].pergunta, newtable[l].pergunta);
+		strcpy_s(table[l].resposta_correta, newtable[l].resposta_correta);
+		table[l].deletado = newtable[l].deletado;
+		index[l].cod = newindex[l].cod;
+		index[l].end = newindex[l].end;
+	}
+}
+
+void reorganizar_usuario(struct Usuario_index index[], struct Usuario_index newindex[], struct Usuario table[], struct Usuario newtable[], int len[]) {
+	int j = -1;
+
+	for (int k = 0; k < len[3]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			j++;
+			newtable[j].cod_usuario = table[i].cod_usuario;
+			newtable[j].cod_idioma = table[i].cod_idioma;
+			newtable[j].nivel_atual = table[i].nivel_atual;
+			newtable[j].pontuacao_total = table[i].pontuacao_total;
+			strcpy_s(newtable[j].nome, table[i].nome);
+			newtable[j].deletado = false;
+			newindex[j].cod = newtable[i].cod_usuario;
+			newindex[j].end = i;
+		}
+	}
+	len[3] = j + 1;
+	for (int l = 0; l < len[3]; l++) {
+		table[l].cod_usuario = newtable[l].cod_usuario;
+		table[l].cod_idioma = newtable[l].cod_idioma;
+		table[l].nivel_atual = newtable[l].nivel_atual;
+		table[l].pontuacao_total = newtable[l].pontuacao_total;
+		strcpy_s(table[l].nome, newtable[l].nome);
 		table[l].deletado = newtable[l].deletado;
 		index[l].cod = newindex[l].cod;
 		index[l].end = newindex[l].end;
@@ -560,16 +662,19 @@ void reorganizar_idioma(struct Idioma_index index[], struct Idioma_index newinde
 /*================================== FIM REORGANIAZAR DADOS ==================================*/
 
 int main() {
+	
 	setlocale(LC_ALL, "portuguese");
 	const int n = 1000;
 	int len[4] = {0};
 	int opcao = 0;
+	printProgress(55);
 	/*
 		len[0] -> Idioma
 		len[1] -> Licao
 		len[2] -> Exercicio
 		len[3] -> Usuario
 	*/
+	/*
 	Idioma idiomas[n];
 	Idioma_index idiomas_index[n];
 
@@ -579,11 +684,20 @@ int main() {
 	Licao licoes[n];
 	Licao_index licoes_index[n];
 
+	Licao licoes_bkp[n];
+	Licao_index licoes_index_bkp[n];
+
 	Exercicio exercicios[n];
 	Exercicio_index exercicios_index[n];
 
+	Exercicio exercicios_bkp[n];
+	Exercicio_index exercicios_index_bkp[n];
+
 	Usuario usuarios[n];
 	Usuario_index usuarios_index[n];
+
+	Usuario usuarios_bkp[n];
+	Usuario_index usuarios_index_bkp[n];
 
 	while (true) {
 		system("clear||cls");
@@ -674,6 +788,9 @@ int main() {
 		case 4:
 			cout << "---------- REORGANIZAR ----------" << endl;
 			cout << "REORGANIZAR IDIOMA    [1]" << endl;
+			cout << "REORGANIZAR LIÇÃO     [2]" << endl;
+			cout << "REORGANIZAR EXERCICIO [3]" << endl;
+			cout << "REORGANIZAR USUARIO   [4]" << endl;
 			cout << "DIGITE UMA OPÇÃO DE REORGANIZAR (0 parar sair): ";
 			cin >> opcao;
 			switch (opcao) {
@@ -681,18 +798,19 @@ int main() {
 				reorganizar_idioma(idiomas_index, idiomas_index_bkp, idiomas, idiomas_bkp, len);
 				break;
 			case 2:
-				delete_licao(licoes, licoes_index, len);
+				reorganizar_licao(licoes_index, licoes_index_bkp, licoes, licoes_bkp, len);
 				break;
-
 			case 3:
-				delete_exercicio(exercicios, exercicios_index, len);
+				reorganizar_exercicio(exercicios_index, exercicios_index_bkp, exercicios, exercicios_bkp, len);
 				break;
 			case 4:
-				delete_usuario(usuarios, usuarios_index, len);
+				reorganizar_usuario(usuarios_index, usuarios_index_bkp, usuarios, usuarios_bkp, len);
 				break;
+
 			}
 			break;
 		}
 		
 	};
+	*/
 }
