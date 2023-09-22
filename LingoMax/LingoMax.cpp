@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <locale>
 
 using namespace std;
@@ -56,19 +56,23 @@ struct Usuario_index {
 
 
 
-void printProgress(double porcentagem) {
-	char progresso[101] = "";
-	for (int i = 0; i < 100; i++) {
-		if (i < porcentagem) {
-			strcat_s(progresso,100, "|");
-		}
-		else {
-			strcat_s(progresso,100, " ");
-		}
-	}
-	cout << "[" << progresso << "]";
-}
+void barra_progresso(double porcentagem, int cor) {
+	const int p = 101; 
+	char progresso[p] = "";
+	char progresso_blank[p] = "";
+	if (porcentagem < 0.0) porcentagem = 0.0;
+	if (porcentagem > 100.0) porcentagem = 100.0;
 
+	int cont_barra = (int)(porcentagem);
+	for (int i = 0; i < cont_barra; i++) {
+		strcat_s(progresso, p, " ");
+	}
+	for (int i = cont_barra; i < p - 1; i++) {
+		strcat_s(progresso_blank, p, " ");
+	}
+	
+	cout << "\033[4;1;7;" << cor <<"m[" << progresso << "\033[0m" << progresso_blank << "]";
+}
 /*================================== INICIO BUSCA BINARIA ==================================*/
 
 int busca_idioma(struct Idioma table[], struct Idioma_index index[], int len[], int cod) {
@@ -141,7 +145,7 @@ void consulta_idioma(struct Idioma table[], int pos) {
 	}
 	else {
 		if (!(table[pos].deletado)) {
-			cout << "Descrição: " << table[pos].descricao << endl;
+			cout << "DescriÃ§Ã£o: " << table[pos].descricao << endl;
 		}
 		else {
 			cout << "Idioma indefinido!" << endl;
@@ -167,9 +171,9 @@ void insert_idioma(Idioma table[], Idioma_index index[], int n, int len[]) {
 	char finalizar[2];
 	cout << "========= CADASTRAR IDIOMA =========" << endl;
 	for (int i = len[0]; i < n; i++) {
-		cout << "Código: ";
+		cout << "CÃ³digo: ";
 		cin >> table[i].cod_idioma;
-		cout << "Descrição: ";
+		cout << "DescriÃ§Ã£o: ";
 		cin.ignore();
 		cin.getline(table[i].descricao, 30);
 		table[i].deletado = false;
@@ -200,11 +204,11 @@ void register_index_licao(Licao table[], Licao_index index[], int len[], int end
 void insert_licao(Licao table[], Licao_index index[], Idioma idioma[], Idioma_index idioma_index[], int n, int len[]) {
 	system("clear||cls");
 	char finalizar[2];
-	cout << "========= CADASTRAR LIÇÃO =========" << endl;
+	cout << "========= CADASTRAR LIÃ‡ÃƒO =========" << endl;
 	for (int i = len[1]; i < n; i++) {
-		cout << "Código: ";
+		cout << "CÃ³digo: ";
 		cin >> table[i].cod_licao;
-		cout << "Código idioma: ";
+		cout << "CÃ³digo idioma: ";
 		cin >> table[i].cod_idioma;
 		consulta_idioma(idioma, busca_idioma(idioma, idioma_index, len, table[i].cod_idioma));
 		cout << "Total niveis: ";
@@ -213,7 +217,7 @@ void insert_licao(Licao table[], Licao_index index[], Idioma idioma[], Idioma_in
 		register_index_licao(table, index, len, i);
 		len[1]++;
 		cout << "===========================================" << endl;
-		cout << "Deseja cadastrar outra lição?[S][N] ";
+		cout << "Deseja cadastrar outra liÃ§Ã£o?[S][N] ";
 		cin >> finalizar;
 		if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
 			return;
@@ -240,7 +244,7 @@ void insert_exercicio(Exercicio table[], Exercicio_index index[], int n, int len
 	char finalizar[2];
 	cout << "========= CADASTRAR EXERCICIO =========" << endl;
 	for (int i = len[2]; i < n; i++) {
-		cout << "Código: ";
+		cout << "CÃ³digo: ";
 		cin >> table[i].cod_exercicio;
 		cout << "Nivel de dificuldade: ";
 		cin >> table[i].nivel_dificuldade;
@@ -277,18 +281,19 @@ void register_index_usuario(Usuario table[], Usuario_index index[], int len[], i
 	index[fim + 1].end = end;
 }
 
-void insert_usuario(Usuario table[], Usuario_index index[], int n, int len[]) {
+void insert_usuario(Usuario table[], Usuario_index index[], Idioma idioma[], Idioma_index idioma_index[], int n, int len[]) {
 	system("clear||cls");
 	char finalizar[2];
 	cout << "========= CADASTRAR USUARIO =========" << endl;
 	for (int i = len[3]; i < n; i++) {
-		cout << "Código: ";
+		cout << "CÃ³digo: ";
 		cin >> table[i].cod_usuario;
 		cout << "Nome: ";
 		cin.ignore();
 		cin.getline(table[i].nome, 60);
-		cout << "Código idioma: ";
+		cout << "CÃ³digo idioma: ";
 		cin >> table[i].cod_idioma;
+		consulta_idioma(idioma, busca_idioma(idioma, idioma_index, len, table[i].cod_idioma));
 		table[i].nivel_atual = 0;
 		table[i].pontuacao_total = 0;
 
@@ -302,7 +307,7 @@ void insert_usuario(Usuario table[], Usuario_index index[], int n, int len[]) {
 			return;
 		}
 		else {
-			insert_usuario(table, index, n, len);
+			insert_usuario(table, index, idioma, idioma_index, n, len);
 			return;
 		}
 	}
@@ -320,7 +325,7 @@ void exaustiva_idioma(struct Idioma table[], struct Idioma_index index[], int le
 		if (!(table[i].deletado)) {
 			cout << "==================================" << endl;
 			cout << "\nCod. Idioma: " << table[i].cod_idioma;
-			cout << "\tDescrição: " << table[i].descricao << endl;
+			cout << "\tDescriÃ§Ã£o: " << table[i].descricao << endl;
 		}
 	}
 	cout << "==================================" << endl;
@@ -338,12 +343,12 @@ void exaustiva_idioma(struct Idioma table[], struct Idioma_index index[], int le
 void exaustiva_licao(struct Licao table[], struct Licao_index index[], int len[]) {
 	system("clear||cls");
 	char finalizar[2];
-	cout << "========= LIÇÕES =========" << endl;
+	cout << "========= LIÃ‡Ã•ES =========" << endl;
 	for (int k = 0; k < len[1]; k++) {
 		int i = index[k].end;
 		if (!(table[i].deletado)) {
 			cout << "==================================" << endl;
-			cout << "\nCod. Lição: " << table[i].cod_licao;
+			cout << "\nCod. LiÃ§Ã£o: " << table[i].cod_licao;
 			cout << "\tCod. Idioma: " << table[i].cod_idioma;
 			cout << "\tTotal niveis: " << table[i].total_niveis << endl;
 		}
@@ -399,7 +404,7 @@ void exaustiva_usuario(struct Usuario table[], struct Usuario_index index[], int
 			cout << "\tNome: " << table[i].nome;
 			cout << "\tCod. Idioma: " << table[i].cod_idioma;
 			cout << "\tNivel atual: " << table[i].nivel_atual;
-			cout << "\tPontuação total: " << table[i].pontuacao_total << endl;
+			cout << "\tPontuaÃ§Ã£o total: " << table[i].pontuacao_total << endl;
 		}
 	}
 	cout << "==================================" << endl;
@@ -428,14 +433,14 @@ void delete_idioma(Idioma table[], Idioma_index index[], int len[]) {
 		result = busca_idioma(table, index, len, cod);
 		if (result >= 0) {
 			table[result].deletado = true;
-			cout << "Idioma " << table[result].descricao << " deletado lógicamente!" << endl;
+			cout << "Idioma " << table[result].descricao << " deletado lÃ³gicamente!" << endl;
 		}
 		else {
-			cout << "Registro não encontrado!" << endl;
+			cout << "Registro nÃ£o encontrado!" << endl;
 		}
 	}
 	else {
-		cout << "Instrução cancelada!" << endl;
+		cout << "InstruÃ§Ã£o cancelada!" << endl;
 	}
 	cout << "==================================" << endl;
 	cout << "Deseja deletar outro idioma?[S][N] ";
@@ -453,24 +458,24 @@ void delete_licao(Licao table[], Licao_index index[], int len[]) {
 	system("clear||cls");
 	char finalizar[2];
 	int cod, result;
-	cout << "========= DELETAR LIÇÃO =========" << endl;
-	cout << "Codigo Lição (-1 para cancelar): ";
+	cout << "========= DELETAR LIÃ‡ÃƒO =========" << endl;
+	cout << "Codigo LiÃ§Ã£o (-1 para cancelar): ";
 	cin >> cod;
 	if (cod >= 0) {
 		result = busca_licao(table, index, len, cod);
 		if (result >= 0) {
 			table[result].deletado = true;
-			cout << "Lição " << table[result].cod_licao << " deletado lógicamente!" << endl;
+			cout << "LiÃ§Ã£o " << table[result].cod_licao << " deletado lÃ³gicamente!" << endl;
 		}
 		else {
-			cout << "Registro não encontrado!" << endl;
+			cout << "Registro nÃ£o encontrado!" << endl;
 		}
 	}
 	else {
-		cout << "Instrução cancelada!" << endl;
+		cout << "InstruÃ§Ã£o cancelada!" << endl;
 	}
 	cout << "==================================" << endl;
-	cout << "Deseja deletar outra lição?[S][N] ";
+	cout << "Deseja deletar outra liÃ§Ã£o?[S][N] ";
 	cin >> finalizar;
 	if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
 		return;
@@ -492,14 +497,14 @@ void delete_exercicio(Exercicio table[], Exercicio_index index[], int len[]) {
 		result = busca_exercicio(table, index, len, cod);
 		if (result >= 0) {
 			table[result].deletado = true;
-			cout << "Exercicio " << table[result].cod_exercicio << " deletado lógicamente!" << endl;
+			cout << "Exercicio " << table[result].cod_exercicio << " deletado lÃ³gicamente!" << endl;
 		}
 		else {
-			cout << "Registro não encontrado!" << endl;
+			cout << "Registro nÃ£o encontrado!" << endl;
 		}
 	}
 	else {
-		cout << "Instrução cancelada!" << endl;
+		cout << "InstruÃ§Ã£o cancelada!" << endl;
 	}
 	cout << "==================================" << endl;
 	cout << "Deseja deletar outro exercicio?[S][N] ";
@@ -524,14 +529,14 @@ void delete_usuario(Usuario table[], Usuario_index index[], int len[]) {
 		result = busca_usuario(table, index, len, cod);
 		if (result >= 0) {
 			table[result].deletado = true;
-			cout << "Usuario " << table[result].nome << " deletado lógicamente!" << endl;
+			cout << "Usuario " << table[result].nome << " deletado lÃ³gicamente!" << endl;
 		}
 		else {
-			cout << "Registro não encontrado!" << endl;
+			cout << "Registro nÃ£o encontrado!" << endl;
 		}
 	}
 	else {
-		cout << "Instrução cancelada!" << endl;
+		cout << "InstruÃ§Ã£o cancelada!" << endl;
 	}
 	cout << "==================================" << endl;
 	cout << "Deseja deletar outro usuario?[S][N] ";
@@ -561,6 +566,13 @@ void reorganizar_idioma(struct Idioma_index index[], struct Idioma_index newinde
 			newindex[j].end = i;
 		}
 	}
+	for (int l = 0; l < len[0]; l++) {
+		table[l].cod_idioma = NULL;
+		strcpy_s(table[l].descricao, NULL);
+		table[l].deletado = NULL;
+		index[l].cod = NULL;
+		index[l].end = NULL;
+	}
     len[0] = j + 1;
 	for (int l = 0; l < len[0]; l++) {
 		table[l].cod_idioma = newtable[l].cod_idioma;
@@ -586,6 +598,14 @@ void reorganizar_licao(struct Licao_index index[], struct Licao_index newindex[]
 			newindex[j].cod = newtable[j].cod_licao;
 			newindex[j].end = j;
 		}
+	}
+	for (int l = 0; l < len[1]; l++) {
+		table[l].cod_licao = NULL;
+		table[l].cod_idioma = NULL;
+		table[l].total_niveis = NULL;
+		table[l].deletado = NULL;
+		index[l].cod = NULL;
+		index[l].end = NULL;
 	}
 	len[1] = j + 1;
 	for (int l = 0; l < len[1]; l++) {
@@ -614,6 +634,16 @@ void reorganizar_exercicio(struct Exercicio_index index[], struct Exercicio_inde
 			newindex[j].cod = newtable[i].cod_exercicio;
 			newindex[j].end = i; 
 		}
+	}
+	for (int l = 0; l < len[2]; l++) {
+		table[l].cod_exercicio = NULL;
+		table[l].nivel_dificuldade = NULL;
+		table[l].pontos = NULL;
+		strcpy_s(table[l].pergunta, NULL);
+		strcpy_s(table[l].resposta_correta, NULL);
+		table[l].deletado = NULL;
+		index[l].cod = NULL;
+		index[l].end = NULL;
 	}
 	len[2] = j + 1;
 	for (int l = 0; l < len[2]; l++) {
@@ -645,6 +675,16 @@ void reorganizar_usuario(struct Usuario_index index[], struct Usuario_index newi
 			newindex[j].end = i;
 		}
 	}
+	for (int l = 0; l < len[3]; l++) {
+		table[l].cod_usuario = NULL;
+		table[l].cod_idioma = NULL;
+		table[l].nivel_atual = NULL;
+		table[l].pontuacao_total = NULL;
+		strcpy_s(table[l].nome, NULL);
+		table[l].deletado = NULL;
+		index[l].cod = NULL;
+		index[l].end = NULL;
+	}
 	len[3] = j + 1;
 	for (int l = 0; l < len[3]; l++) {
 		table[l].cod_usuario = newtable[l].cod_usuario;
@@ -661,20 +701,84 @@ void reorganizar_usuario(struct Usuario_index index[], struct Usuario_index newi
 
 /*================================== FIM REORGANIAZAR DADOS ==================================*/
 
+/*================================== INICIO PRATICAR ==================================*/
+
+int escolher_usuario(Usuario table[], Usuario_index index[], Idioma idiomas[], Idioma_index idiomas_index[], int len[]) {
+	int cod_usuario;
+	int ret;
+	char finalizar[2];
+	cout << "========= ESCOLHER USUARIO =========" << endl;
+	for (int k = 0; k < len[3]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			cout << "\nCod.: " << table[i].cod_usuario;
+			cout << "\tNome: " << table[i].nome;
+			cout << "\tIdioma: " << idiomas[busca_idioma(idiomas, idiomas_index, len, table[i].cod_idioma)].descricao << endl;
+		}
+	}
+	cout << "Digite o cÃ³digo do usuario(-1 para cancelar): ";
+	cin >> cod_usuario;
+	if (cod_usuario == -1) {
+		return -1;
+	}
+	ret = busca_usuario(table, index, len, cod_usuario);
+	if (ret == -1) {
+		cout << "Usuario nÃ£o existente!" << endl;
+		cout << "==================================" << endl;
+		cout << "Deseja tentar outro usuario?[S][N] ";
+		cin >> finalizar;
+		if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+			return -1;
+		}
+		else {
+			return escolher_usuario(table, index, idiomas, idiomas_index, len);
+		}
+	}
+	else {
+		return ret;
+	}
+}
+
+int escolher_nivel(Licao table[], Licao_index index[]) {
+
+}
+
+void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Licao_index licoes_index[], Exercicio exercicios[], Exercicio_index exercicios_index[], Usuario usuarios[], Usuario_index usuarios_index[], int len[]) {
+	int end_usuario;
+	int nivel_exercicio;
+	int cor;
+	float percen;
+	end_usuario = escolher_usuario(usuarios, usuarios_index, idiomas, idiomas_index, len);
+	system("clear||cls");
+	if (end_usuario == -1) {
+		return;
+	}
+	cout << "UsuÃ¡rio: " << usuarios[end_usuario].nome << "\tNivel atual: " << usuarios[end_usuario].nivel_atual << endl;
+	percen = 34;
+	if (percen > 33 && percen < 70) {
+		cor = 33;
+	}
+	else if (percen >= 70) {
+		cor = 32;
+	}
+	barra_progresso(percen, cor);
+	cin >> nivel_exercicio;
+}
+/*================================== FIM PRATICAR ==================================*/
+
 int main() {
 	
 	setlocale(LC_ALL, "portuguese");
 	const int n = 1000;
 	int len[4] = {0};
 	int opcao = 0;
-	printProgress(55);
 	/*
 		len[0] -> Idioma
 		len[1] -> Licao
 		len[2] -> Exercicio
 		len[3] -> Usuario
 	*/
-	/*
+	
 	Idioma idiomas[n];
 	Idioma_index idiomas_index[n];
 
@@ -698,7 +802,18 @@ int main() {
 
 	Usuario usuarios_bkp[n];
 	Usuario_index usuarios_index_bkp[n];
-
+	int cor = 31;
+	for (int i = 0; i < 100; i = i +3) {
+		cout << "Iniciando LingoMax..." << endl;
+		if (i > 33 && i < 70) {
+			cor = 33;
+		}
+		else if (i >= 70) {
+			cor = 32;
+		}
+		barra_progresso(i, cor);
+		system("clear||cls");
+	}
 	while (true) {
 		system("clear||cls");
 		cout << "---------- MENU ----------" << endl;
@@ -706,17 +821,18 @@ int main() {
 		cout << "\033[34mLISTAGEM         [2]\033[0m" << endl;
 		cout << "\033[31mDELETAR          [3]\033[0m" << endl;
 		cout << "\033[33mREORGANIZAR      [4]\033[0m" << endl;
-		cout << "DIGITE UMA OPÇÃO: ";
+		cout << "\033[1;7;35mPRATICAR         [5]\033[0m" << endl;
+		cout << "DIGITE UMA OPÃ‡ÃƒO: ";
 		cin >> opcao;
 		system("clear||cls");
 		switch (opcao) {
 		case 1:
 			cout << "---------- CADASTROS ----------" << endl;
 			cout << "CADASTRAR IDIOMA    [1]" << endl;
-			cout << "CADASTRAR LIÇÃO     [2]" << endl;
+			cout << "CADASTRAR LIÃ‡ÃƒO     [2]" << endl;
 			cout << "CADASTRAR EXERCICIO [3]" << endl;
 			cout << "CADASTRAR USUARIO   [4]" << endl;
-			cout << "DIGITE UMA OPÇÃO DE CADASTRO (0 parar sair): ";
+			cout << "DIGITE UMA OPÃ‡ÃƒO DE CADASTRO (0 parar sair): ";
 			cin >> opcao;
 			switch (opcao) {
 			case 1:
@@ -729,7 +845,7 @@ int main() {
 				insert_exercicio(exercicios, exercicios_index, n, len);
 				break;
 			case 4:
-				insert_usuario(usuarios, usuarios_index, n, len);
+				insert_usuario(usuarios, usuarios_index, idiomas, idiomas_index, n, len);
 				break;
 			case 0:
 				break;
@@ -738,10 +854,10 @@ int main() {
 		case 2:
 			cout << "---------- LISTAGEM ----------" << endl;
 			cout << "LISTAR IDIOMAS    [1]" << endl;
-			cout << "LISTAR LIÇÕES     [2]" << endl;
+			cout << "LISTAR LIÃ‡Ã•ES     [2]" << endl;
 			cout << "LISTAR EXERCICIOS [3]" << endl;
 			cout << "LISTAR USUARIOS   [4]" << endl;
-			cout << "DIGITE UMA OPÇÃO DE LISTAGEM (0 parar sair): ";
+			cout << "DIGITE UMA OPÃ‡ÃƒO DE LISTAGEM (0 parar sair): ";
 			cin >> opcao;
 			switch (opcao) {
 			case 1:
@@ -764,10 +880,10 @@ int main() {
 		case 3:
 			cout << "---------- DELETAR ----------" << endl;
 			cout << "DELETAR IDIOMA    [1]" << endl;
-			cout << "DELETAR LIÇÃO     [2]" << endl;
+			cout << "DELETAR LIÃ‡ÃƒO     [2]" << endl;
 			cout << "DELETAR EXERCICIO [3]" << endl;
 			cout << "DELETAR USUARIO   [4]" << endl;
-			cout << "DIGITE UMA OPÇÃO DE DELETAR (0 parar sair): ";
+			cout << "DIGITE UMA OPÃ‡ÃƒO DE DELETAR (0 parar sair): ";
 			cin >> opcao;
 			switch (opcao) {
 			case 1:
@@ -788,10 +904,10 @@ int main() {
 		case 4:
 			cout << "---------- REORGANIZAR ----------" << endl;
 			cout << "REORGANIZAR IDIOMA    [1]" << endl;
-			cout << "REORGANIZAR LIÇÃO     [2]" << endl;
+			cout << "REORGANIZAR LIÃ‡ÃƒO     [2]" << endl;
 			cout << "REORGANIZAR EXERCICIO [3]" << endl;
 			cout << "REORGANIZAR USUARIO   [4]" << endl;
-			cout << "DIGITE UMA OPÇÃO DE REORGANIZAR (0 parar sair): ";
+			cout << "DIGITE UMA OPÃ‡ÃƒO DE REORGANIZAR (0 parar sair): ";
 			cin >> opcao;
 			switch (opcao) {
 			case 1:
@@ -809,8 +925,11 @@ int main() {
 
 			}
 			break;
+		case 5:
+			praticar(idiomas, idiomas_index, licoes, licoes_index, exercicios, exercicios_index, usuarios, usuarios_index, len);
+			break;
 		}
 		
 	};
-	*/
+
 }
