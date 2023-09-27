@@ -568,7 +568,7 @@ void reorganizar_idioma(struct Idioma_index index[], struct Idioma_index newinde
 	}
 	for (int l = 0; l < len[0]; l++) {
 		table[l].cod_idioma = NULL;
-		strcpy_s(table[l].descricao, NULL);
+		strcpy_s(table[l].descricao, "");
 		table[l].deletado = NULL;
 		index[l].cod = NULL;
 		index[l].end = NULL;
@@ -639,8 +639,8 @@ void reorganizar_exercicio(struct Exercicio_index index[], struct Exercicio_inde
 		table[l].cod_exercicio = NULL;
 		table[l].nivel_dificuldade = NULL;
 		table[l].pontos = NULL;
-		strcpy_s(table[l].pergunta, NULL);
-		strcpy_s(table[l].resposta_correta, NULL);
+		strcpy_s(table[l].pergunta, "");
+		strcpy_s(table[l].resposta_correta, "");
 		table[l].deletado = NULL;
 		index[l].cod = NULL;
 		index[l].end = NULL;
@@ -680,7 +680,7 @@ void reorganizar_usuario(struct Usuario_index index[], struct Usuario_index newi
 		table[l].cod_idioma = NULL;
 		table[l].nivel_atual = NULL;
 		table[l].pontuacao_total = NULL;
-		strcpy_s(table[l].nome, NULL);
+		strcpy_s(table[l].nome, "");
 		table[l].deletado = NULL;
 		index[l].cod = NULL;
 		index[l].end = NULL;
@@ -780,12 +780,11 @@ int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], in
 }
 
 int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], Exercicio_index exercicios_index[], int len[]) {
-	system("clear||cls");
 	int cod_licao;
 	int cod_exercicio;
 	int total_niveis;
 	char finalizar[2];
-	cout << "========= Escolher lição =========" << endl;
+	cout << "\n========= Escolher lição =========" << endl;
 	for (int k = 0; k < len[1]; k++) {
 		int i = index[k].end;
 		if (!(table[i].deletado)) {
@@ -812,7 +811,7 @@ int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], E
 	}
 	total_niveis = table[busca_licao(table, index, len, cod_licao)].total_niveis;
 	cod_exercicio = escolher_exercicio(exercicios, exercicios_index, len, total_niveis);
-	return -1;
+	return cod_exercicio;
 }
 
 void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Licao_index licoes_index[], Exercicio exercicios[], Exercicio_index exercicios_index[], Usuario usuarios[], Usuario_index usuarios_index[], int len[]) {
@@ -826,7 +825,7 @@ void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Li
 		return;
 	}
 	cout << "Usuário: " << usuarios[end_usuario].nome << "\tNivel atual: " << usuarios[end_usuario].nivel_atual << endl;
-	percen = 34;
+	percen = 99;
 	if (percen > 33 && percen < 70) {
 		cor = 33;
 	}
@@ -875,7 +874,7 @@ int main() {
 	Usuario usuarios_bkp[n];
 	Usuario_index usuarios_index_bkp[n];
 	int cor = 31;
-	for (int i = 0; i < 100; i = i +2) {
+	for (float i = 0; i < 100; i = i + 1) {
 		cout << "Iniciando LingoMax..." << endl;
 		if (i > 33 && i < 70) {
 			cor = 33;
