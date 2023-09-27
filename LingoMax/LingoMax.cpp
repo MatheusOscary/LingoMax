@@ -739,8 +739,80 @@ int escolher_usuario(Usuario table[], Usuario_index index[], Idioma idiomas[], I
 	}
 }
 
-int escolher_nivel(Licao table[], Licao_index index[]) {
+int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], int nivel_maximo) {
+	system("clear||cls");
+	int cod_exercicio;
+	char finalizar[2];
+	cout << "========= Escolher exercicio =========" << endl;
+	for (int k = 0; k < len[2]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			if (table[i].nivel_dificuldade > nivel_maximo) {
+				cout << "\033[1;7;31m";
+			}
+			else {
+				cout << "\033[1;7;32m";
+			}
+			cout << "\nCod. Exercicio: " << table[i].cod_exercicio;
+			cout << "\tNivel de dificuldade: " << table[i].nivel_dificuldade;
+			cout << "\tPontos: " << table[i].pontos << endl;
+			cout << "\033[0m";
+		}
+	}
+	cout << "Digite o código do exercicio(-1 para cancelar): ";
+	cin >> cod_exercicio;
+	if (cod_exercicio == -1) {
+		return -1;
+	}
+	if (busca_exercicio(table, index, len, cod_exercicio) == -1) {
+		cout << "Exercicio não existente!" << endl;
+		cout << "==================================" << endl;
+		cout << "Deseja tentar outro exercicio?[S][N] ";
+		cin >> finalizar;
+		if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+			return -1;
+		}
+		else {
+			return escolher_exercicio(table, index, len, nivel_maximo);
+		}
+	}
 
+}
+
+int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], Exercicio_index exercicios_index[], int len[]) {
+	system("clear||cls");
+	int cod_licao;
+	int cod_exercicio;
+	int total_niveis;
+	char finalizar[2];
+	cout << "========= Escolher lição =========" << endl;
+	for (int k = 0; k < len[1]; k++) {
+		int i = index[k].end;
+		if (!(table[i].deletado)) {
+			cout << "\nCod: " << table[i].cod_licao;
+			cout << "\tTotal niveis: " << table[i].total_niveis << endl;
+		}
+	}
+	cout << "Digite o código da lição(-1 para cancelar): ";
+	cin >> cod_licao;
+	if (cod_licao == -1) {
+		return -1;
+	}
+	if (busca_licao(table, index, len, cod_licao) == -1) {
+		cout << "Lição não existente!" << endl;
+		cout << "==================================" << endl;
+		cout << "Deseja tentar outra Lição?[S][N] ";
+		cin >> finalizar;
+		if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+			return -1;
+		}
+		else {
+			return escolher_nivel(table, index, exercicios, exercicios_index, len);
+		}
+	}
+	total_niveis = table[busca_licao(table, index, len, cod_licao)].total_niveis;
+	cod_exercicio = escolher_exercicio(exercicios, exercicios_index, len, total_niveis);
+	return -1;
 }
 
 void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Licao_index licoes_index[], Exercicio exercicios[], Exercicio_index exercicios_index[], Usuario usuarios[], Usuario_index usuarios_index[], int len[]) {
@@ -762,7 +834,7 @@ void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Li
 		cor = 32;
 	}
 	barra_progresso(percen, cor);
-	cin >> nivel_exercicio;
+	nivel_exercicio = escolher_nivel(licoes, licoes_index, exercicios, exercicios_index, len);
 }
 /*================================== FIM PRATICAR ==================================*/
 
@@ -803,7 +875,7 @@ int main() {
 	Usuario usuarios_bkp[n];
 	Usuario_index usuarios_index_bkp[n];
 	int cor = 31;
-	for (int i = 0; i < 100; i = i +3) {
+	for (int i = 0; i < 100; i = i +2) {
 		cout << "Iniciando LingoMax..." << endl;
 		if (i > 33 && i < 70) {
 			cor = 33;
