@@ -31,7 +31,7 @@ struct Exercicio {
 	int nivel_dificuldade;
 	char pergunta[120];
 	char resposta_correta[100];
-	float pontos;
+	int pontos;
 	bool deletado;
 };
 
@@ -45,7 +45,7 @@ struct Usuario {
 	char nome[60];
 	int cod_idioma;
 	int nivel_atual;
-	float pontuacao_total;
+	int pontuacao_total;
 	bool deletado;
 };
 
@@ -252,7 +252,6 @@ void insert_exercicio(Exercicio table[], Exercicio_index index[], int n, int len
 		cin.ignore();
 		cin.getline(table[i].pergunta, 120);
 		cout << "Resposta: ";
-		cin.ignore();
 		cin.getline(table[i].resposta_correta, 100);
 		cout << "Pontos: ";
 		cin >> table[i].pontos;
@@ -739,15 +738,16 @@ int escolher_usuario(Usuario table[], Usuario_index index[], Idioma idiomas[], I
 	}
 }
 
-int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], int nivel_maximo) {
+int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], int total_niveis, int nivel_usuario) {
 	system("clear||cls");
 	int cod_exercicio;
+	int end_exercicio;
 	char finalizar[2];
 	cout << "========= Escolher exercicio =========" << endl;
 	for (int k = 0; k < len[2]; k++) {
 		int i = index[k].end;
-		if (!(table[i].deletado)) {
-			if (table[i].nivel_dificuldade > nivel_maximo) {
+		if (!(table[i].deletado) || table[i].nivel_dificuldade <= total_niveis) {
+			if (table[i].nivel_dificuldade > nivel_usuario) {
 				cout << "\033[1;7;31m";
 			}
 			else {
@@ -764,7 +764,8 @@ int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], in
 	if (cod_exercicio == -1) {
 		return -1;
 	}
-	if (busca_exercicio(table, index, len, cod_exercicio) == -1) {
+	end_exercicio = busca_exercicio(table, index, len, cod_exercicio);
+	if (end_exercicio == -1) {
 		cout << "Exercicio não existente!" << endl;
 		cout << "==================================" << endl;
 		cout << "Deseja tentar outro exercicio?[S][N] ";
@@ -773,15 +774,30 @@ int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], in
 			return -1;
 		}
 		else {
-			return escolher_exercicio(table, index, len, nivel_maximo);
+			return escolher_exercicio(table, index, len, total_niveis,nivel_usuario);
 		}
+	}
+	else if(table[end_exercicio].nivel_dificuldade > nivel_usuario){
+		cout << "usuario não está no nivel do exercicio!" << endl;
+		cout << "==================================" << endl;
+		cout << "Deseja tentar outro exercicio?[S][N] ";
+		cin >> finalizar;
+		if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+			return -1;
+		}
+		else {
+			return escolher_exercicio(table, index, len, total_niveis, nivel_usuario);
+		}
+	}
+	else{
+		return end_exercicio;
 	}
 
 }
 
-int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], Exercicio_index exercicios_index[], int len[]) {
+int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], Exercicio_index exercicios_index[], int len[], int nivel_usuario) {
 	int cod_licao;
-	int cod_exercicio;
+	int end_exercicio;
 	int total_niveis;
 	char finalizar[2];
 	cout << "\n========= Escolher lição =========" << endl;
@@ -806,34 +822,77 @@ int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], E
 			return -1;
 		}
 		else {
-			return escolher_nivel(table, index, exercicios, exercicios_index, len);
+			return escolher_nivel(table, index, exercicios, exercicios_index, len, nivel_usuario);
 		}
 	}
 	total_niveis = table[busca_licao(table, index, len, cod_licao)].total_niveis;
-	cod_exercicio = escolher_exercicio(exercicios, exercicios_index, len, total_niveis);
-	return cod_exercicio;
+	end_exercicio = escolher_exercicio(exercicios, exercicios_index, len, total_niveis, nivel_usuario);
+	if (end_exercicio == -1) {
+		return escolher_nivel(table, index, exercicios, exercicios_index, len, nivel_usuario);
+	}
+	else {
+		return end_exercicio;
+	}
+}
+
+void responder_pergunta(Exercicio &exercicio, Usuario &usuario) {
+	char resposta[100];
+	char finalizar[2];
+	system("clear||cls");
+	cout << exercicio.pergunta << endl;
+	cin >> resposta;
+	if (strcmp(resposta, exercicio.resposta_correta) == 0) {
+		cout << "Resposta correta! Parabéns!!!" << endl;
+		usuario.pontuacao_total = usuario.pontuacao_total + (exercicio.pontos);
+		usuario.nivel_atual = (int)usuario.pontuacao_total / 100;
+	}
+	else {
+		cout << "Resposta errada!" << endl;
+		usuario.pontuacao_total = usuario.pontuacao_total - (exercicio.pontos * 0.1);
+		usuario.nivel_atual = (int)usuario.pontuacao_total / 100;
+		cout << "==================================" << endl;
+		cout << "Deseja tentar novamente?[S][N] ";
+		cin >> finalizar;
+		if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+			return;
+		}
+		else {
+			responder_pergunta(exercicio, usuario);
+			return;
+		}
+	}
 }
 
 void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Licao_index licoes_index[], Exercicio exercicios[], Exercicio_index exercicios_index[], Usuario usuarios[], Usuario_index usuarios_index[], int len[]) {
 	int end_usuario;
-	int nivel_exercicio;
-	int cor;
+	int end_exercicio;
+	int cor = 31;
+	char finalizar[2] = "S";
 	float percen;
 	end_usuario = escolher_usuario(usuarios, usuarios_index, idiomas, idiomas_index, len);
-	system("clear||cls");
 	if (end_usuario == -1) {
 		return;
 	}
-	cout << "Usuário: " << usuarios[end_usuario].nome << "\tNivel atual: " << usuarios[end_usuario].nivel_atual << endl;
-	percen = 99;
-	if (percen > 33 && percen < 70) {
-		cor = 33;
+	while (strcmp(finalizar, "S") == 0 || strcmp(finalizar, "s") == 0) {
+		system("clear||cls");
+		cout << "Usuário: " << usuarios[end_usuario].nome << "\tNivel atual: " << usuarios[end_usuario].nivel_atual << "\tPontos: " << usuarios[end_usuario].pontuacao_total << endl;
+		percen = usuarios[end_usuario].pontuacao_total % 100;
+		if (percen > 33 && percen < 70) {
+			cor = 33;
+		}
+		else if (percen >= 70) {
+			cor = 32;
+		}
+		barra_progresso(percen, cor);
+		end_exercicio = escolher_nivel(licoes, licoes_index, exercicios, exercicios_index, len, usuarios[end_usuario].nivel_atual);
+		if (end_exercicio == -1) {
+			return;
+		}
+		responder_pergunta(exercicios[end_exercicio], usuarios[end_usuario]);
+		cout << "\n==================================" << endl;
+		cout << "Continuar a praticar?[S][N] ";
+		cin >> finalizar;
 	}
-	else if (percen >= 70) {
-		cor = 32;
-	}
-	barra_progresso(percen, cor);
-	nivel_exercicio = escolher_nivel(licoes, licoes_index, exercicios, exercicios_index, len);
 }
 /*================================== FIM PRATICAR ==================================*/
 
