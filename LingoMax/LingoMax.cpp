@@ -896,12 +896,25 @@ void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Li
 }
 /*================================== FIM PRATICAR ==================================*/
 
+void exibir_certificado() {
+	cout << "\033[32mCertificado de Conclusão" << endl;
+	cout << "Isso é para certificar que" << endl;
+	cout << "\033[0m\033[33m[Seu Nome]\033[0m\033[32m" << endl;
+	cout << "completou com sucesso o curso de idiomas" << endl;
+	cout << "\033[0m\033[33m[Nome do Curso]\033[0m\033[32m" << endl;
+	cout << "Parabéns pelo seu esforço e dedicação!" << endl;
+	cout << "_________________________" << endl;
+	cout << "        \033[0m\033[31m@LingoMax\033[0m" << endl;
+}
+
 int main() {
 	
 	setlocale(LC_ALL, "portuguese");
 	const int n = 1000;
 	int len[4] = {0};
 	int opcao = 0;
+	exibir_certificado();
+	cin >> opcao;
 	/*
 		len[0] -> Idioma
 		len[1] -> Licao
