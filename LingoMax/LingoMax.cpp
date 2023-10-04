@@ -28,6 +28,7 @@ struct Licao_index{
 
 struct Exercicio {
 	int cod_exercicio;
+	int cod_licao;
 	int nivel_dificuldade;
 	char pergunta[120];
 	char resposta_correta[100];
@@ -246,6 +247,8 @@ void insert_exercicio(Exercicio table[], Exercicio_index index[], int n, int len
 	for (int i = len[2]; i < n; i++) {
 		cout << "Código: ";
 		cin >> table[i].cod_exercicio;
+		cout << "Código lição: ";
+		cin >> table[i].cod_licao;
 		cout << "Nivel de dificuldade: ";
 		cin >> table[i].nivel_dificuldade;
 		cout << "Pergunta: ";
@@ -561,8 +564,8 @@ void reorganizar_idioma(struct Idioma_index index[], struct Idioma_index newinde
 			newtable[j].cod_idioma = table[i].cod_idioma;
 			strcpy_s(newtable[j].descricao, table[i].descricao);
 			newtable[j].deletado = false;
-			newindex[j].cod = table[i].cod_idioma;
-			newindex[j].end = i;
+			newindex[j].cod = table[j].cod_idioma;
+			newindex[j].end = j;
 		}
 	}
 	for (int l = 0; l < len[0]; l++) {
@@ -625,17 +628,19 @@ void reorganizar_exercicio(struct Exercicio_index index[], struct Exercicio_inde
 		if (!(table[i].deletado)) {
 			j++;
 			newtable[j].cod_exercicio = table[i].cod_exercicio;
+			newtable[j].cod_licao = table[i].cod_licao;
 			newtable[j].nivel_dificuldade = table[i].nivel_dificuldade;
 			newtable[j].pontos = table[i].pontos;
 			strcpy_s(newtable[j].pergunta, table[i].pergunta);
 			strcpy_s(newtable[j].resposta_correta, table[i].resposta_correta);
 			newtable[j].deletado = false;
-			newindex[j].cod = newtable[i].cod_exercicio;
-			newindex[j].end = i; 
+			newindex[j].cod = newtable[j].cod_exercicio;
+			newindex[j].end = j; 
 		}
 	}
 	for (int l = 0; l < len[2]; l++) {
 		table[l].cod_exercicio = NULL;
+		table[l].cod_licao = NULL;
 		table[l].nivel_dificuldade = NULL;
 		table[l].pontos = NULL;
 		strcpy_s(table[l].pergunta, "");
@@ -647,6 +652,7 @@ void reorganizar_exercicio(struct Exercicio_index index[], struct Exercicio_inde
 	len[2] = j + 1;
 	for (int l = 0; l < len[2]; l++) {
 		table[l].cod_exercicio = newtable[l].cod_exercicio;
+		table[l].cod_licao = newtable[l].cod_licao;
 		table[l].nivel_dificuldade = newtable[l].nivel_dificuldade;
 		table[l].pontos = newtable[l].pontos;
 		strcpy_s(table[l].pergunta, newtable[l].pergunta);
@@ -670,8 +676,8 @@ void reorganizar_usuario(struct Usuario_index index[], struct Usuario_index newi
 			newtable[j].pontuacao_total = table[i].pontuacao_total;
 			strcpy_s(newtable[j].nome, table[i].nome);
 			newtable[j].deletado = false;
-			newindex[j].cod = newtable[i].cod_usuario;
-			newindex[j].end = i;
+			newindex[j].cod = newtable[j].cod_usuario;
+			newindex[j].end = j;
 		}
 	}
 	for (int l = 0; l < len[3]; l++) {
@@ -738,7 +744,7 @@ int escolher_usuario(Usuario table[], Usuario_index index[], Idioma idiomas[], I
 	}
 }
 
-int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], int total_niveis, int nivel_usuario) {
+int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], int total_niveis, int cod_licao, int nivel_usuario) {
 	system("clear||cls");
 	int cod_exercicio;
 	int end_exercicio;
@@ -746,7 +752,7 @@ int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], in
 	cout << "========= Escolher exercicio =========" << endl;
 	for (int k = 0; k < len[2]; k++) {
 		int i = index[k].end;
-		if (!(table[i].deletado) || table[i].nivel_dificuldade <= total_niveis) {
+		if (!(table[i].deletado) && table[i].nivel_dificuldade <= total_niveis && table[i].cod_licao == cod_licao) {
 			if (table[i].nivel_dificuldade > nivel_usuario) {
 				cout << "\033[1;7;31m";
 			}
@@ -774,7 +780,7 @@ int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], in
 			return -1;
 		}
 		else {
-			return escolher_exercicio(table, index, len, total_niveis,nivel_usuario);
+			return escolher_exercicio(table, index, len, total_niveis, cod_licao, nivel_usuario);
 		}
 	}
 	else if(table[end_exercicio].nivel_dificuldade > nivel_usuario){
@@ -786,7 +792,19 @@ int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], in
 			return -1;
 		}
 		else {
-			return escolher_exercicio(table, index, len, total_niveis, nivel_usuario);
+			return escolher_exercicio(table, index, len, total_niveis, cod_licao, nivel_usuario);
+		}
+	}
+	else if (table[end_exercicio].cod_licao != cod_licao) {
+		cout << "usuario não está no nivel do exercicio!" << endl;
+		cout << "==================================" << endl;
+		cout << "Deseja tentar outro exercicio?[S][N] ";
+		cin >> finalizar;
+		if (strcmp(finalizar, "N") == 0 || strcmp(finalizar, "n") == 0) {
+			return -1;
+		}
+		else {
+			return escolher_exercicio(table, index, len, total_niveis, cod_licao, nivel_usuario);
 		}
 	}
 	else{
@@ -795,15 +813,30 @@ int escolher_exercicio(Exercicio table[], Exercicio_index index[], int len[], in
 
 }
 
-int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], Exercicio_index exercicios_index[], int len[], int nivel_usuario) {
+void exibir_certificado(Idioma idioma, Usuario usuario, int cod_licao) {
+	char finalizar[2];
+	system("clear||cls");
+	cout << "\033[32mCertificado de Conclusão" << endl;
+	cout << "Isso é para certificar que" << endl;
+	cout << "\033[0m\033[33m"<< usuario.nome <<"\033[0m\033[32m" << endl;
+	cout << "completou com sucesso a lição código "<< cod_licao <<" o curso de idiomas" << endl;
+	cout << "\033[0m\033[33m"<< idioma.descricao <<"\033[0m\033[32m" << endl;
+	cout << "Parabéns pelo seu esforço e dedicação!" << endl;
+	cout << "_________________________" << endl;
+	cout << "        \033[0m\033[31m@LingoMax\033[0m" << endl;
+	cout << "\n\nAperte qualquer tecla para continuar:";
+	cin >> finalizar;
+}
+
+int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], Exercicio_index exercicios_index[], Idioma idioma, Usuario usuario, int len[], int nivel_usuario, int cod_idioma) {
 	int cod_licao;
 	int end_exercicio;
-	int total_niveis;
+	int end_licao;
 	char finalizar[2];
 	cout << "\n========= Escolher lição =========" << endl;
 	for (int k = 0; k < len[1]; k++) {
 		int i = index[k].end;
-		if (!(table[i].deletado)) {
+		if (!(table[i].deletado) && table[i].cod_idioma == cod_idioma ) {
 			cout << "\nCod: " << table[i].cod_licao;
 			cout << "\tTotal niveis: " << table[i].total_niveis << endl;
 		}
@@ -822,13 +855,17 @@ int escolher_nivel(Licao table[], Licao_index index[], Exercicio exercicios[], E
 			return -1;
 		}
 		else {
-			return escolher_nivel(table, index, exercicios, exercicios_index, len, nivel_usuario);
+			return escolher_nivel(table, index, exercicios, exercicios_index, idioma, usuario, len, nivel_usuario, cod_idioma);
 		}
 	}
-	total_niveis = table[busca_licao(table, index, len, cod_licao)].total_niveis;
-	end_exercicio = escolher_exercicio(exercicios, exercicios_index, len, total_niveis, nivel_usuario);
+	end_licao = busca_licao(table, index, len, cod_licao);
+	if (nivel_usuario >= table[end_licao].total_niveis) {
+		exibir_certificado(idioma, usuario, cod_licao);
+		return -1;
+	}
+	end_exercicio = escolher_exercicio(exercicios, exercicios_index, len, table[end_licao].total_niveis, table[end_licao].cod_licao, nivel_usuario);
 	if (end_exercicio == -1) {
-		return escolher_nivel(table, index, exercicios, exercicios_index, len, nivel_usuario);
+		return escolher_nivel(table, index, exercicios, exercicios_index, idioma, usuario, len, nivel_usuario, cod_idioma);
 	}
 	else {
 		return end_exercicio;
@@ -863,13 +900,17 @@ void responder_pergunta(Exercicio &exercicio, Usuario &usuario) {
 	}
 }
 
+
+
 void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Licao_index licoes_index[], Exercicio exercicios[], Exercicio_index exercicios_index[], Usuario usuarios[], Usuario_index usuarios_index[], int len[]) {
 	int end_usuario;
 	int end_exercicio;
+	int end_idioma;
 	int cor = 31;
 	char finalizar[2] = "S";
 	float percen;
 	end_usuario = escolher_usuario(usuarios, usuarios_index, idiomas, idiomas_index, len);
+	end_idioma = busca_idioma(idiomas, idiomas_index, len, usuarios[end_usuario].cod_idioma);
 	if (end_usuario == -1) {
 		return;
 	}
@@ -884,7 +925,7 @@ void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Li
 			cor = 32;
 		}
 		barra_progresso(percen, cor);
-		end_exercicio = escolher_nivel(licoes, licoes_index, exercicios, exercicios_index, len, usuarios[end_usuario].nivel_atual);
+		end_exercicio = escolher_nivel(licoes, licoes_index, exercicios, exercicios_index, idiomas[end_idioma], usuarios[end_usuario], len, usuarios[end_usuario].nivel_atual, usuarios[end_usuario].cod_idioma);
 		if (end_exercicio == -1) {
 			return;
 		}
@@ -896,26 +937,17 @@ void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Li
 }
 /*================================== FIM PRATICAR ==================================*/
 
-void exibir_certificado() {
-	cout << "\033[32mCertificado de Conclusão" << endl;
-	cout << "Isso é para certificar que" << endl;
-	cout << "\033[0m\033[33m[Seu Nome]\033[0m\033[32m" << endl;
-	cout << "completou com sucesso o curso de idiomas" << endl;
-	cout << "\033[0m\033[33m[Nome do Curso]\033[0m\033[32m" << endl;
-	cout << "Parabéns pelo seu esforço e dedicação!" << endl;
-	cout << "_________________________" << endl;
-	cout << "        \033[0m\033[31m@LingoMax\033[0m" << endl;
-}
+
 
 int main() {
 	
 	setlocale(LC_ALL, "portuguese");
 	const int n = 1000;
 	int len[4] = {0};
-	int opcao = 0;
+	int opcao = 0;/*
 	exibir_certificado();
 	cin >> opcao;
-	/*
+	
 		len[0] -> Idioma
 		len[1] -> Licao
 		len[2] -> Exercicio

@@ -1,0 +1,4 @@
+﻿  LingoMax.cpp
+C:\Users\LABORINFO\Documents\GitHub\LingoMax\LingoMax\LingoMax.cpp(888,53): warning C4244: '=': conversão de 'double' para 'int', possível perda de dados
+C:\Users\LABORINFO\Documents\GitHub\LingoMax\LingoMax\LingoMax.cpp(920,50): warning C4244: '=': conversão de 'int' para 'float', possível perda de dados
+  LingoMax.vcxproj -> C:\Users\LABORINFO\Documents\GitHub\LingoMax\x64\Debug\LingoMax.exe
