@@ -935,8 +935,28 @@ void praticar(Idioma idiomas[], Idioma_index idiomas_index[], Licao licoes[], Li
 		cin >> finalizar;
 	}
 }
+
 /*================================== FIM PRATICAR ==================================*/
 
+void ranking(Usuario table[], Usuario_index index[], int len[]) {
+	int len_rank = 0;
+	Usuario rank[1000];
+	char finalizar[2];
+	cout << "========= RANKING =========" << endl;
+	for (int i = 0; i < len[3]; i++) {
+		int j = len_rank -1;
+		for (; j >= 0 && rank[j].pontuacao_total < table[i].pontuacao_total; j--) {
+			rank[j + 1] = rank[j];
+		}
+		rank[j + 1] = table[i];
+		len_rank++;
+	}
+	for (int i = 0; i < len_rank; i++) {
+		cout << "Nome: " << rank[i].nome << "\t" << "Pontos: " << rank[i].pontuacao_total << endl;
+	}
+	cout << "\n\nAperte qualquer tecla para continuar:";
+	cin >> finalizar;
+}
 
 
 int main() {
@@ -997,6 +1017,7 @@ int main() {
 		cout << "\033[31mDELETAR          [3]\033[0m" << endl;
 		cout << "\033[33mREORGANIZAR      [4]\033[0m" << endl;
 		cout << "\033[1;7;35mPRATICAR         [5]\033[0m" << endl;
+		cout << "\033[1;7;33mRANKING          [6]\033[0m" << endl;
 		cout << "DIGITE UMA OPÇÃO: ";
 		cin >> opcao;
 		system("clear||cls");
@@ -1102,6 +1123,9 @@ int main() {
 			break;
 		case 5:
 			praticar(idiomas, idiomas_index, licoes, licoes_index, exercicios, exercicios_index, usuarios, usuarios_index, len);
+			break;
+		case 6:
+			ranking(usuarios, usuarios_index, len);
 			break;
 		}
 		
